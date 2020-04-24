@@ -15,6 +15,10 @@ class MathEvaluatorTest {
 		    assertEquals(new MathEvaluator().calculate("1+1--2-4"), 0d, 0.01);
 	  }
 	  
+	  @Test public void testBeginnsWithMinus() {
+		    assertEquals(new MathEvaluator().calculate("-1+1--2-4"), -2d, 0.01);
+	  }
+	  
 	  @Test public void testAdditionLongNumbers() {
 		    assertEquals(new MathEvaluator().calculate("10+11"), 21d, 0.01);
 	  }
@@ -61,6 +65,11 @@ class MathEvaluatorTest {
 
 	  @Test public void testComplex() {
 	    assertEquals(new MathEvaluator().calculate("2 / (2 + 3) * 4.33 - -6"), 7.732, 0.01);
+	  }
+	  
+	  @Test public void testComplex2() {
+		  assertEquals(new MathEvaluator().calculate("-3 - (-2 + 3) + 2"), 5.732, 0.01);
+		  
 	  }
 
 }

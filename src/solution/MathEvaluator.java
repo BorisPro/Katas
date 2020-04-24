@@ -12,12 +12,25 @@ public class MathEvaluator {
 		expression = expression.replace(" ", "").replace("\\s", "").replace("\\s+", "");
 		expression = expression.replace("--", "+").replace("+-", "-"); // remove whitespace.
 		term = new StringBuilder(expression);
+		resolveOtherBrackets(expression);
 		executeAll('/', (a, b) -> a / b);
 		executeAll('*', (a, b) -> a * b);
 		executeAll('+', (a, b) -> a + b);
 		executeAll('-', (a, b) -> a - b);
 		
 		return Double.valueOf(term.toString());
+	}
+
+	private void resolveOtherBrackets(String expression) {
+		while(expression.contains("(")) {
+			int innerBracket = expression.lastIndexOf("(");
+			int outerBracket = expression.indexOf(")", innerBracket);
+			String substring = expression.substring(innerBracket+1, outerBracket);
+			double result = calculate(substring);
+			term = new StringBuilder(expression);
+			term.replace(innerBracket, outerBracket + 1, Double.toString(result));
+			expression = term.toString();
+		}
 	}
 
 	private void executeAll(char symbol, DoubleBinaryOperator operation) {
