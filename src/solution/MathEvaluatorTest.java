@@ -72,4 +72,7 @@ class MathEvaluatorTest {
 		  
 	  }
 
+	  @Test public void testComplex3() {
+		  assertEquals(new MathEvaluator().calculate("10 / (2 + 3) * 2 - -6"), 10, 0.01);
+	  }
 }

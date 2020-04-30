@@ -12,7 +12,7 @@ public class MathEvaluator {
 		expression = expression.replace(" ", "").replace("\\s", "").replace("\\s+", "");
 		expression = expression.replace("--", "+").replace("+-", "-"); // remove whitespace.
 		term = new StringBuilder(expression);
-		resolveOtherBrackets(expression);
+		resolveAllBrackets(expression);
 		executeAll('/', (a, b) -> a / b);
 		executeAll('*', (a, b) -> a * b);
 		executeAll('+', (a, b) -> a + b);
@@ -21,16 +21,18 @@ public class MathEvaluator {
 		return Double.valueOf(term.toString());
 	}
 
-	private void resolveOtherBrackets(String expression) {
+	private void resolveAllBrackets(String expression) {
 		while(expression.contains("(")) {
-			int innerBracket = expression.lastIndexOf("(");
-			int outerBracket = expression.indexOf(")", innerBracket);
-			String substring = expression.substring(innerBracket+1, outerBracket);
-			double result = calculate(substring);
-			term = new StringBuilder(expression);
-			term.replace(innerBracket, outerBracket + 1, Double.toString(result));
+			evaluateLastBracketIn(expression);
 			expression = term.toString();
 		}
+	}
+
+	private void evaluateLastBracketIn(String expression) {
+		int innerBracket = expression.lastIndexOf('(');
+		int outerBracket = expression.indexOf(')', innerBracket);
+		double result = new MathEvaluator().calculate(expression.substring(innerBracket+1, outerBracket));
+		term.replace(innerBracket, outerBracket + 1, Double.toString(result));
 	}
 
 	private void executeAll(char symbol, DoubleBinaryOperator operation) {
@@ -68,11 +70,11 @@ public class MathEvaluator {
 	}
 
 	private Integer extractNumberIndex(int startIndex, IntFunction<Integer> incrementor) {
-		Integer endOfRightNumber = startIndex;
+		Integer endOfNumber = startIndex;
 		do {
-			endOfRightNumber = incrementor.apply(endOfRightNumber);
-		} while ((indexBelongsToNumber(incrementor.apply(endOfRightNumber))));
-		return endOfRightNumber;
+			endOfNumber = incrementor.apply(endOfNumber);
+		} while ((indexBelongsToNumber(incrementor.apply(endOfNumber))));
+		return endOfNumber;
 	}
 
 	private boolean indexBelongsToNumber(int startPositionOfFirstNumber) {
@@ -81,6 +83,8 @@ public class MathEvaluator {
 		} else {
 			boolean isNumber = Character.isDigit(term.charAt(startPositionOfFirstNumber));
 			boolean isDot = term.charAt(startPositionOfFirstNumber) == '.';
+//			boolean isMinus = term.charAt(startPositionOfFirstNumber) == '-';
+//			return isNumber || isDot || isMinus;
 			return (isNumber || isDot || isSign(startPositionOfFirstNumber));
 		} 
 	}
@@ -97,5 +101,10 @@ public class MathEvaluator {
 			}
 		}
 		return result;
+	}
+	
+	@Override
+	public String toString() {
+		return this.term.toString();
 	}
 }
